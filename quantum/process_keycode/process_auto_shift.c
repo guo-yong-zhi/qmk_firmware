@@ -66,7 +66,22 @@ void autoshift_flush(void) {
     autoshift_lastkey = KC_NO;
   }
 }
+void autoshift_flush_hold(void) {
+  if (autoshift_lastkey != KC_NO) {
+    uint16_t elapsed = timer_elapsed(autoshift_time);
 
+    if (elapsed > autoshift_timeout) {
+        register_code(KC_LSFT);
+
+        register_code(autoshift_lastkey);
+        unregister_code(autoshift_lastkey);
+
+        unregister_code(KC_LSFT);
+        autoshift_time = 0;
+        autoshift_lastkey = KC_NO;
+    }
+  }
+}
 bool autoshift_enabled = true;
 
 void autoshift_enable(void) {
