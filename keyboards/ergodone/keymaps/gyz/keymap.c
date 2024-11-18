@@ -50,14 +50,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                            KC_LEFT,         KC_DOWN,           KC_UP,         KC_RGHT,         KC_RCTL,
          KC_HOME,          KC_END,
            TT(2),
-  RCTL_T(KC_ESC),         KC_BSPC,  RSFT_T(KC_ENT)
+    LT(2,KC_ESC),         KC_BSPC,    LT(1,KC_ENT)
 ),
 //////////////////////////////1//////////////////////////////
 	[1] = LAYOUT_ergodox(
 //=====================left=====================
          _______,           KC_F1,           KC_F2,           KC_F3,           KC_F4,           KC_F5,          KC_F11,
-         _______,         XXXXXXX,         XXXXXXX,         XXXXXXX,         XXXXXXX,         XXXXXXX,         _______,
-         _______,         XXXXXXX,         KC_LALT,         KC_LSFT,         KC_LCTL,         XXXXXXX,
+         _______,         XXXXXXX,         KC_BTN1,         KC_MS_U,         KC_BTN2,         KC_WH_U,         _______,
+         _______,         XXXXXXX,         KC_MS_L,         KC_MS_D,         KC_MS_R,         KC_WH_D,
          _______,           TG(3),         XXXXXXX,         XXXXXXX,         XXXXXXX,         XXXXXXX,         _______,
          _______,         _______,         _______,         _______,         _______,
                                                                                               _______,         _______,
@@ -66,8 +66,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 //=====================right=====================
           KC_F12,           KC_F6,           KC_F7,           KC_F8,           KC_F9,          KC_F10,         _______,
-         _______,         KC_PGUP,         KC_HOME,           KC_UP,          KC_END,         XXXXXXX,         _______,
-                          KC_PGDN,         KC_LEFT,         KC_DOWN,         KC_RGHT,         XXXXXXX,         _______,
+         _______,         KC_PGUP,         KC_HOME,           KC_UP,          KC_END,         KC_PGUP,         _______,
+                          KC_PGDN,         KC_LEFT,         KC_DOWN,         KC_RGHT,         KC_PGDN,         _______,
          _______,         XXXXXXX,         XXXXXXX,         XXXXXXX,         XXXXXXX,         XXXXXXX,         _______,
                                            _______,         _______,         _______,         _______,         _______,
          KC_WHOM,         KC_WREF,
