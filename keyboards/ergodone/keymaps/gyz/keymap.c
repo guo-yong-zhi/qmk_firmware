@@ -40,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
          KC_LCTL,         KC_LGUI,         KC_LALT,         KC_MINS,          KC_EQL,
                                                                                                KC_INS,         KC_PSCR,
                                                                                                                 KC_DEL,
-                                                                      LCTL_T(KC_SPC),   LT(1,KC_BSPC),    LT(2,KC_ENT),
+                                                                      LCTL_T(KC_SPC),   LGUI_T(KC_BSPC),    LT(2,KC_ENT),
 
 //=====================right=====================
           KC_APP,            KC_6,            KC_7,            KC_8,            KC_9,            KC_0,         KC_BSPC,
