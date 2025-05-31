@@ -260,10 +260,10 @@ void super_esc_finished (qk_tap_dance_state_t *state, void *user_data) {
       register_code16(KC_ESC);
       break;
     case SINGLE_HOLD:
-      register_code16(RCS(KC_W));
+      register_code16(LCTL(RSFT(KC_W)));
       break;
     case DOUBLE_SINGLE_TAP:
-      register_code16(RCTL(KC_W));
+      register_code16(LCTL(KC_W));
   }
 }
 
@@ -273,10 +273,10 @@ void super_esc_reset (qk_tap_dance_state_t *state, void *user_data) {
       unregister_code16(KC_ESC);
       break;
     case SINGLE_HOLD:
-      unregister_code16(RCS(KC_W));
+      unregister_code16(LCTL(RSFT(KC_W)));
       break;
     case DOUBLE_SINGLE_TAP:
-      unregister_code16(RCTL(KC_W));
+      unregister_code16(LCTL(KC_W));
   }
 }
 // define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
