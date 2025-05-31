@@ -204,6 +204,7 @@ void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
       break;
     case SINGLE_HOLD:
       register_code16(KC_LABK);
+      reset_tap_dance(state);
       break;
     case DOUBLE_SINGLE_TAP: // allow nesting of 2 parens `((` within tapping term
       tap_code16(KC_LPRN);
@@ -231,6 +232,7 @@ void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
       break;
     case SINGLE_HOLD:
       register_code16(KC_RABK);
+      reset_tap_dance(state);
       break;
     case DOUBLE_SINGLE_TAP: // allow nesting of 2 parens `((` within tapping term
       tap_code16(KC_RPRN);
@@ -258,7 +260,12 @@ void super_esc_finished (tap_dance_state_t *state, void *user_data) {
       register_code16(KC_ESC);
       break;
     case SINGLE_HOLD:
-      register_code16(LCTL(KC_Q));
+      if (detected_host_os() == OS_MACOS) {
+        register_code16(LCTL(KC_Q));
+      } else {
+        register_code16(LALT(KC_F4));
+      }
+      reset_tap_dance(state);
       break;
     case DOUBLE_SINGLE_TAP:
       register_code16(LCTL(KC_W));
@@ -271,7 +278,12 @@ void super_esc_reset (tap_dance_state_t *state, void *user_data) {
       unregister_code16(KC_ESC);
       break;
     case SINGLE_HOLD:
-      unregister_code16(LCTL(KC_Q));
+      
+      if (detected_host_os() == OS_MACOS) {
+        unregister_code16(LCTL(KC_Q));
+      } else {
+        unregister_code16(LALT(KC_F4));
+      }
       break;
     case DOUBLE_SINGLE_TAP:
       unregister_code16(LCTL(KC_W));
