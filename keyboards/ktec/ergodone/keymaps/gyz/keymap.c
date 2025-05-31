@@ -17,11 +17,11 @@ static td_state_t td_state;
 // declare your tapdance functions:
 
 // function to determine the current tapdance state
-int cur_dance (qk_tap_dance_state_t *state);
+int cur_dance (tap_dance_state_t *state);
 
 // `finished` and `reset` functions for each tapdance keycode
-void l_prn_abk_finished (qk_tap_dance_state_t *state, void *user_data);
-void r_prn_abk_reset (qk_tap_dance_state_t *state, void *user_data);
+void l_prn_abk_finished (tap_dance_state_t *state, void *user_data);
+void r_prn_abk_reset (tap_dance_state_t *state, void *user_data);
 
 /* THIS FILE WAS GENERATED!
  *
@@ -87,7 +87,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                              _______,         _______,         _______,
 
 //=====================right=====================
-          KC_F12,         XXXXXXX,         KC_NLCK,         KC_PSLS,         KC_PAST,         KC_PMNS,         _______,
+          KC_F12,         XXXXXXX,          KC_NUM,         KC_PSLS,         KC_PAST,         KC_PMNS,         _______,
          _______,         KC_PGUP,            KC_7,            KC_8,            KC_9,         KC_PPLS,         _______,
                           KC_PGDN,            KC_4,            KC_5,            KC_6,         KC_PPLS,         _______,
          _______,         XXXXXXX,            KC_1,            KC_2,            KC_3,         KC_PENT,         _______,
@@ -148,11 +148,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 void matrix_init_user(void) {
 };
 
-void autoshift_flush_hold(void);
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
     static unsigned int timer = 0;
-    autoshift_flush_hold();
     uint8_t layer = biton32(layer_state);
 
     ergodox_board_led_off();
@@ -180,14 +178,14 @@ void matrix_scan_user(void) {
             // none
             break;
     };
-    if (host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK))
+    if (host_keyboard_led_state().caps_lock)
     {
         ergodox_right_led_3_on();
     }
 };
 
 // determine the tapdance state to return
-int cur_dance (qk_tap_dance_state_t *state) {
+int cur_dance (tap_dance_state_t *state) {
   if (state->count == 1) {
     if (state->interrupted || !state->pressed) { return SINGLE_TAP; }
     else { return SINGLE_HOLD; }
@@ -198,7 +196,7 @@ int cur_dance (qk_tap_dance_state_t *state) {
 
 // handle the possible states for each tapdance keycode you define:
 
-void l_prn_abk_finished (qk_tap_dance_state_t *state, void *user_data) {
+void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
   td_state = cur_dance(state);
   switch (td_state) {
     case SINGLE_TAP:
@@ -213,7 +211,7 @@ void l_prn_abk_finished (qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void l_prn_abk_reset (qk_tap_dance_state_t *state, void *user_data) {
+void l_prn_abk_reset (tap_dance_state_t *state, void *user_data) {
   switch (td_state) {
     case SINGLE_TAP:
       unregister_code16(KC_LPRN);
@@ -225,7 +223,7 @@ void l_prn_abk_reset (qk_tap_dance_state_t *state, void *user_data) {
       unregister_code16(KC_LPRN);
   }
 }
-void r_prn_abk_finished (qk_tap_dance_state_t *state, void *user_data) {
+void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
   td_state = cur_dance(state);
   switch (td_state) {
     case SINGLE_TAP:
@@ -240,7 +238,7 @@ void r_prn_abk_finished (qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void r_prn_abk_reset (qk_tap_dance_state_t *state, void *user_data) {
+void r_prn_abk_reset (tap_dance_state_t *state, void *user_data) {
   switch (td_state) {
     case SINGLE_TAP:
       unregister_code16(KC_RPRN);
@@ -253,7 +251,7 @@ void r_prn_abk_reset (qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void super_esc_finished (qk_tap_dance_state_t *state, void *user_data) {
+void super_esc_finished (tap_dance_state_t *state, void *user_data) {
   td_state = cur_dance(state);
   switch (td_state) {
     case SINGLE_TAP:
@@ -267,7 +265,7 @@ void super_esc_finished (qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void super_esc_reset (qk_tap_dance_state_t *state, void *user_data) {
+void super_esc_reset (tap_dance_state_t *state, void *user_data) {
   switch (td_state) {
     case SINGLE_TAP:
       unregister_code16(KC_ESC);
@@ -280,7 +278,7 @@ void super_esc_reset (qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 // define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
-qk_tap_dance_action_t tap_dance_actions[] = {
+tap_dance_action_t tap_dance_actions[] = {
   [L_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, l_prn_abk_finished, l_prn_abk_reset),
   [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, r_prn_abk_reset),
   [SUPER_ESC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_esc_finished, super_esc_reset),
