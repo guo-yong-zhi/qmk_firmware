@@ -2,7 +2,7 @@
 
 // tapdance keycodes
 enum td_keycodes {
-  L_PRN_ABK, R_PRN_ABK
+  L_PRN_ABK, R_PRN_ABK, SUPER_ESC
 };
 // define a type containing as many tapdance states as you need
 typedef enum {
@@ -33,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //////////////////////////////0//////////////////////////////
 	[0] = LAYOUT_ergodox(
 //=====================left=====================
-          KC_ESC,            KC_1,            KC_2,            KC_3,            KC_4,            KC_5,          KC_GRV,
+   TD(SUPER_ESC),            KC_1,            KC_2,            KC_3,            KC_4,            KC_5,          KC_GRV,
          KC_CAPS,            KC_Q,            KC_W,            KC_E,            KC_R,            KC_T,         KC_LBRC,
           KC_TAB,            KC_A,            KC_S,            KC_D,            KC_F,            KC_G,
          KC_LSFT,            KC_Z,            KC_X,            KC_C,            KC_V,            KC_B,   TD(L_PRN_ABK),
@@ -252,8 +252,36 @@ void r_prn_abk_reset (qk_tap_dance_state_t *state, void *user_data) {
       unregister_code16(KC_RPRN);
   }
 }
+
+void super_esc_finished (qk_tap_dance_state_t *state, void *user_data) {
+  td_state = cur_dance(state);
+  switch (td_state) {
+    case SINGLE_TAP:
+      register_code16(KC_ESC);
+      break;
+    case SINGLE_HOLD:
+      register_code16(RCS(KC_W));
+      break;
+    case DOUBLE_SINGLE_TAP:
+      register_code16(RCTL(KC_W));
+  }
+}
+
+void super_esc_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (td_state) {
+    case SINGLE_TAP:
+      unregister_code16(KC_ESC);
+      break;
+    case SINGLE_HOLD:
+      unregister_code16(RCS(KC_W));
+      break;
+    case DOUBLE_SINGLE_TAP:
+      unregister_code16(RCTL(KC_W));
+  }
+}
 // define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
 qk_tap_dance_action_t tap_dance_actions[] = {
   [L_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, l_prn_abk_finished, l_prn_abk_reset),
-  [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, r_prn_abk_reset)
+  [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, r_prn_abk_reset),
+  [SUPER_ESC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_esc_finished, super_esc_reset),
 };
