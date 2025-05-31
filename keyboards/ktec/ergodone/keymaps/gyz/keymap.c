@@ -295,3 +295,22 @@ tap_dance_action_t tap_dance_actions[] = {
   [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, r_prn_abk_reset),
   [SUPER_ESC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_esc_finished, super_esc_reset),
 };
+
+bool process_detected_host_os_user(os_variant_t detected_os) {
+  switch (detected_os) {
+    case OS_WINDOWS:
+      ergodox_right_led_1_on();
+      break;
+    case OS_LINUX:
+      ergodox_right_led_2_on();
+      break;
+    case OS_MACOS:
+      ergodox_right_led_3_on();
+      break;
+    case OS_UNSURE:
+    case OS_IOS:
+      ;
+  }
+  wait_ms(300);
+  return true;
+}
