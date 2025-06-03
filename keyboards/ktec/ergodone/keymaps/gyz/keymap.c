@@ -182,7 +182,7 @@ int cur_dance (tap_dance_state_t *state) {
     else { return SINGLE_HOLD; }
   }
   if (state->count == 2) { return DOUBLE_SINGLE_TAP; }
-  else { return 3; } // any number higher than the maximum state value you return above
+  else { return state->count; } // any number higher than the maximum state value you return above
 }
 
 // handle the possible states for each tapdance keycode you define:
@@ -197,9 +197,10 @@ void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
       tap_code16(KC_LABK);
       reset_tap_dance(state);
       break;
-    case DOUBLE_SINGLE_TAP: // allow nesting of 2 parens `((` within tapping term
-      tap_code16(KC_LPRN);
-      tap_code16(KC_LPRN);
+    default:
+      for (uint8_t i = 0; i < td_state; ++i) {
+        tap_code16(KC_LPRN);
+      }
   }
 }
 
@@ -213,9 +214,10 @@ void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
       tap_code16(KC_RABK);
       reset_tap_dance(state);
       break;
-    case DOUBLE_SINGLE_TAP: // allow nesting of 2 parens `((` within tapping term
-      tap_code16(KC_RPRN);
-      tap_code16(KC_RPRN);
+    default:
+      for (uint8_t i = 0; i < td_state; ++i) {
+        tap_code16(KC_LPRN);
+      }
   }
 }
 
