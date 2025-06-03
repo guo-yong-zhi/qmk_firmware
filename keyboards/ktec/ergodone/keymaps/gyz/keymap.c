@@ -2,7 +2,7 @@
 
 // tapdance keycodes
 enum td_keycodes {
-  L_PRN_ABK, R_PRN_ABK, SUPER_ESC
+  L_PRN_ABK, R_PRN_ABK, SUPER_ESC, SUPER_LOCK
 };
 // define a type containing as many tapdance states as you need
 typedef enum {
@@ -40,10 +40,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
          KC_LCTL,         KC_LGUI,         KC_LALT,         KC_MINS,          KC_EQL,
                                                                                                KC_INS,         KC_PSCR,
                                                                                                                 KC_DEL,
-                                                                      RCTL_T(KC_SPC),   RGUI_T(KC_BSPC),    LT(2,KC_ENT),
+                                                                      RCTL_T(KC_SPC), RGUI_T(KC_BSPC),    LT(2,KC_ENT),
 
 //=====================right=====================
-          KC_APP,            KC_6,            KC_7,            KC_8,            KC_9,            KC_0,      RGUI(KC_L),
+          KC_APP,            KC_6,            KC_7,            KC_8,            KC_9,            KC_0,  TD(SUPER_LOCK),
          KC_RBRC,            KC_Y,            KC_U,            KC_I,            KC_O,            KC_P,         KC_BSLS,
                              KC_H,            KC_J,            KC_K,            KC_L,         KC_SCLN,         KC_QUOT,
    TD(R_PRN_ABK),            KC_N,            KC_M,         KC_COMM,          KC_DOT,         KC_SLSH,         KC_RSFT,
@@ -289,11 +289,46 @@ void super_esc_reset (tap_dance_state_t *state, void *user_data) {
       unregister_code16(LCTL(KC_W));
   }
 }
+
+void super_lock_finished (tap_dance_state_t *state, void *user_data) {
+  td_state = cur_dance(state);
+  switch (td_state) {
+    case DOUBLE_SINGLE_TAP:
+      layer_on(3);
+    case SINGLE_TAP:
+      if (detected_host_os() == OS_MACOS) {
+        register_code16(RCTL(RGUI(KC_Q)));
+      } else {
+        register_code16(RGUI(KC_L));
+      }
+      break;
+    case SINGLE_HOLD:
+      register_code16(KC_SLEP);
+      break;
+  }
+}
+
+void super_lock_reset (tap_dance_state_t *state, void *user_data) {
+  switch (td_state) {
+    case DOUBLE_SINGLE_TAP:
+    case SINGLE_TAP:
+      if (detected_host_os() == OS_MACOS) {
+        unregister_code16(RCTL(RGUI(KC_Q)));
+      } else {
+        unregister_code16(RGUI(KC_L));
+      }
+      break;
+    case SINGLE_HOLD:
+      unregister_code16(KC_SLEP);
+      break;
+  }
+}
 // define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
 tap_dance_action_t tap_dance_actions[] = {
   [L_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, l_prn_abk_finished, l_prn_abk_reset),
   [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, r_prn_abk_reset),
   [SUPER_ESC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_esc_finished, super_esc_reset),
+  [SUPER_LOCK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_lock_finished, super_lock_reset),
 };
 
 bool process_detected_host_os_user(os_variant_t detected_os) {
