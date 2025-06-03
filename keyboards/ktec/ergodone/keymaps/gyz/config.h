@@ -1,3 +1,4 @@
 #pragma once
 
 #define DISABLE_SPACE_CADET_ROLLOVER
+#define TAP_CODE_DELAY 10
