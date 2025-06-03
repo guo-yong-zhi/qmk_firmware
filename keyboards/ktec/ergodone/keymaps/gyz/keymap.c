@@ -215,6 +215,7 @@ void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
 void l_prn_abk_reset (tap_dance_state_t *state, void *user_data) {
   switch (td_state) {
     case SINGLE_TAP:
+      wait_ms(10);
       unregister_code16(KC_LPRN);
       break;
     case SINGLE_HOLD:
@@ -243,6 +244,7 @@ void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
 void r_prn_abk_reset (tap_dance_state_t *state, void *user_data) {
   switch (td_state) {
     case SINGLE_TAP:
+      wait_ms(10);
       unregister_code16(KC_RPRN);
       break;
     case SINGLE_HOLD:
