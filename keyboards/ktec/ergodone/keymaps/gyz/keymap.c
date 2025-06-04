@@ -2,7 +2,7 @@
 
 // tapdance keycodes
 enum td_keycodes {
-  L_PRN_ABK, R_PRN_ABK, SUPER_ESC, SUPER_LOCK
+  L_PRN_ABK, R_PRN_ABK, SUPER_ESC, SUPER_LOCK, SMART_CAPS
 };
 // define a type containing as many tapdance states as you need
 typedef enum {
@@ -25,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[0] = LAYOUT_ergodox(
 //=====================left=====================
    TD(SUPER_ESC),            KC_1,            KC_2,            KC_3,            KC_4,            KC_5,          KC_GRV,
-         KC_CAPS,            KC_Q,            KC_W,            KC_E,            KC_R,            KC_T,         KC_LBRC,
+  TD(SMART_CAPS),            KC_Q,            KC_W,            KC_E,            KC_R,            KC_T,         KC_LBRC,
           KC_TAB,            KC_A,            KC_S,            KC_D,            KC_F,            KC_G,
          KC_LSFT,            KC_Z,            KC_X,            KC_C,            KC_V,            KC_B,   TD(L_PRN_ABK),
          KC_LCTL,         KC_LGUI,         KC_LALT,         KC_MINS,          KC_EQL,
@@ -138,12 +138,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
 };
-
+unsigned int scan_timer = 0;
+void reset_scan_timer(unsigned int v) {
+  scan_timer = v;
+}
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
-    static unsigned int timer = 0;
     uint8_t layer = biton32(layer_state);
-
+    scan_timer++;
     ergodox_board_led_off();
     ergodox_right_led_1_off();
     ergodox_right_led_2_off();
@@ -157,8 +159,7 @@ void matrix_scan_user(void) {
             ergodox_right_led_2_on();
             break;
         case 3:
-            timer++;
-            if (timer & (0x01<<9))
+            if (scan_timer & (0x01<<9))
             {
                 ergodox_right_led_1_on();
                 ergodox_right_led_2_on();
@@ -170,6 +171,10 @@ void matrix_scan_user(void) {
             break;
     };
     if (host_keyboard_led_state().caps_lock)
+    {
+        ergodox_right_led_3_on();
+    }
+    if (is_caps_word_on() && (scan_timer & (0x01<<7)))
     {
         ergodox_right_led_3_on();
     }
@@ -268,13 +273,62 @@ void super_lock_reset (tap_dance_state_t *state, void *user_data) {
       break;
   }
 }
+
+void smart_caps_finished (tap_dance_state_t *state, void *user_data) {
+  td_state = cur_dance(state);
+  switch (td_state) {
+    case SINGLE_TAP:
+      if (host_keyboard_led_state().caps_lock) {
+        tap_code16(KC_CAPS);
+        caps_word_off();
+      }
+      else
+      {
+        reset_scan_timer(0x01<<7);
+        caps_word_toggle();
+      }
+      break;
+    case DOUBLE_SINGLE_TAP:
+      if (is_caps_word_on())
+      {
+          caps_word_off();
+      }
+      tap_code16(KC_CAPS);
+      break;
+    case SINGLE_HOLD:
+      break;
+  }
+}
+
 // define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
 tap_dance_action_t tap_dance_actions[] = {
   [L_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, l_prn_abk_finished, NULL),
   [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, NULL),
   [SUPER_ESC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_esc_finished, NULL),
   [SUPER_LOCK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_lock_finished, super_lock_reset),
+  [SMART_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, smart_caps_finished, NULL),
 };
+
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+        case KC_MINS:
+            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case KC_UNDS:
+        case TD(SMART_CAPS):
+            return true;
+
+        default:
+            return false;  // Deactivate Caps Word.
+    }
+}
 
 bool process_detected_host_os_user(os_variant_t detected_os) {
   switch (detected_os) {
