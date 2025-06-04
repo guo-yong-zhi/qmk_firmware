@@ -312,6 +312,14 @@ bool caps_word_press_user(uint16_t keycode) {
         case KC_DEL:
         case KC_UNDS:
         case TD(SMART_CAPS):
+        case KC_LCTL:
+        case KC_LGUI:
+        case KC_LALT:
+        case KC_LSFT:
+        case KC_RCTL:
+        case KC_RGUI:
+        case KC_RALT:
+        case KC_RSFT:
             return true;
 
         default:
