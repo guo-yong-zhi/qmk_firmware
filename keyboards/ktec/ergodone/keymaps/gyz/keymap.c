@@ -180,6 +180,31 @@ void matrix_scan_user(void) {
     }
 };
 
+void l_prn_abk_released (tap_dance_state_t *state, void *user_data) {
+  if ((!state->interrupted) && (!state->finished)) {
+    tap_code16(KC_LPRN);
+  }
+}
+void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
+  if (state->interrupted) {
+    tap_code16(KC_LPRN);
+  } else if (state->pressed) {
+    tap_code16(KC_LABK);
+  }
+}
+void r_prn_abk_released (tap_dance_state_t *state, void *user_data) {
+  if ((!state->interrupted) && (!state->finished)) {
+    tap_code16(KC_RPRN);
+  }
+}
+void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
+  if (state->interrupted) {
+    tap_code16(KC_RPRN);
+  } else if (state->pressed) {
+    tap_code16(KC_RABK);
+  }
+}
+
 // determine the tapdance state to return
 int cur_dance (tap_dance_state_t *state) {
   if (state->count == 1) {
@@ -188,42 +213,6 @@ int cur_dance (tap_dance_state_t *state) {
   }
   if (state->count == 2) { return DOUBLE_SINGLE_TAP; }
   else { return state->count; } // any number higher than the maximum state value you return above
-}
-
-// handle the possible states for each tapdance keycode you define:
-
-void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
-  td_state = cur_dance(state);
-  switch (td_state) {
-    case SINGLE_TAP:
-      tap_code16(KC_LPRN);
-      break;
-    case SINGLE_HOLD:
-      tap_code16(KC_LABK);
-      reset_tap_dance(state);
-      break;
-    default:
-      for (uint8_t i = 0; i < td_state; ++i) {
-        tap_code16(KC_LPRN);
-      }
-  }
-}
-
-void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
-  td_state = cur_dance(state);
-  switch (td_state) {
-    case SINGLE_TAP:
-      tap_code16(KC_RPRN);
-      break;
-    case SINGLE_HOLD:
-      tap_code16(KC_RABK);
-      reset_tap_dance(state);
-      break;
-    default:
-      for (uint8_t i = 0; i < td_state; ++i) {
-        tap_code16(KC_LPRN);
-      }
-  }
 }
 
 void super_esc_finished (tap_dance_state_t *state, void *user_data) {
@@ -302,8 +291,8 @@ void smart_caps_finished (tap_dance_state_t *state, void *user_data) {
 
 // define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
 tap_dance_action_t tap_dance_actions[] = {
-  [L_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, l_prn_abk_finished, NULL),
-  [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, r_prn_abk_finished, NULL),
+  [L_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED_WITH_RELEASE(NULL, l_prn_abk_released, l_prn_abk_finished, NULL),
+  [R_PRN_ABK] = ACTION_TAP_DANCE_FN_ADVANCED_WITH_RELEASE(NULL, r_prn_abk_released, r_prn_abk_finished, NULL),
   [SUPER_ESC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_esc_finished, NULL),
   [SUPER_LOCK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_lock_finished, super_lock_reset),
   [SMART_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, smart_caps_finished, NULL),
