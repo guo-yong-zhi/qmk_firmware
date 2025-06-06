@@ -223,7 +223,7 @@ void super_esc_finished (tap_dance_state_t *state, void *user_data) {
       break;
     case SINGLE_HOLD:
       if (detected_host_os() == OS_MACOS) {
-        tap_code16(LCTL(KC_Q));
+        tap_code16(LCTL(LSFT(KC_W)));
       } else {
         tap_code16(LALT(KC_F4));
       }
