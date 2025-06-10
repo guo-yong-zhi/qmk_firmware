@@ -186,10 +186,12 @@ void l_prn_abk_released (tap_dance_state_t *state, void *user_data) {
   }
 }
 void l_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
-  if (state->interrupted) {
-    tap_code16(KC_LPRN);
-  } else if (state->pressed) {
-    tap_code16(KC_LABK);
+  if (state->pressed) {
+    if (state->interrupted) {
+      tap_code16(KC_LPRN);
+    } else {
+      tap_code16(KC_LABK);
+    }
   }
 }
 void r_prn_abk_released (tap_dance_state_t *state, void *user_data) {
@@ -198,10 +200,12 @@ void r_prn_abk_released (tap_dance_state_t *state, void *user_data) {
   }
 }
 void r_prn_abk_finished (tap_dance_state_t *state, void *user_data) {
-  if (state->interrupted) {
-    tap_code16(KC_RPRN);
-  } else if (state->pressed) {
-    tap_code16(KC_RABK);
+  if (state->pressed) {
+    if (state->interrupted) {
+      tap_code16(KC_RPRN);
+    } else {
+      tap_code16(KC_RABK);
+    }
   }
 }
 
