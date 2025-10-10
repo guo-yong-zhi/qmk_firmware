@@ -1,5 +1,5 @@
 #pragma once
 
 #define DISABLE_SPACE_CADET_ROLLOVER
-#define TAP_CODE_DELAY 20
+#define TAP_CODE_DELAY 30
 #define TAPPING_TOGGLE 1
