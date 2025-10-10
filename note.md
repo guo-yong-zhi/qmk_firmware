@@ -29,7 +29,7 @@ make ergodone:gyz
 
 #sudo make ergodone:gyz:dfu #失败
 
-qmk flash /Users/yongzhi/qmk_firmware-master/ergodone_gyz.hex #成功
+qmk flash /Users/yongzhi/qmk_firmware/ktec_ergodone_gyz.hex #成功
 
 qmk --version
 #1.1.6
